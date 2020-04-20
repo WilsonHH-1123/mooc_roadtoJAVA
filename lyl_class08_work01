@@ -1,0 +1,76 @@
+package cly.work08.demo01;
+//输入一个字符串，请判断是否满足身份证基本要求，并返回具体的生日yyyy-mm-dd。
+//如果输入数据有误，请输出0000-00-00。基本要求是：
+//a)必须是18位；b) 前面位数必须是数字，最后一位可以是数字或小写字母；c) 日期是存在的。
+
+
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Scanner;
+
+public class Main {
+	public static void main(String[] args) throws ParseException {
+		Scanner sr = new Scanner(System.in);
+		//System.out.println("输入18位身份证号");
+		String num = sr.next();
+		try {
+			System.out.println(checkString(num));
+		} catch (WrongDateException e) {
+			// TODO: handle exception
+			System.out.println(e);
+		}catch (ParseException e) {
+			// TODO: handle exception
+			System.out.println("0000-00-00");
+		}
+	}
+	// 定义验证身份证号的方法
+	public static String checkString(String str) throws WrongDateException, ParseException {
+		StringBuffer strb = new StringBuffer(str);
+		// 先判断是否满足18位
+		if (strb.length() != 18) {
+			return "0000-00-00";
+		}
+//		判断最后一位是数字或小写字母,前17位是数字
+		if (strb.charAt(17) >= 48 && strb.charAt(17) <= 57 && strb.charAt(17) >= 97 && strb.charAt(17) <= 122) {
+			for (int i = 0; i < 17; i++) {
+				if (strb.charAt(i) > 57 || strb.charAt(i) < 48) {
+					return "0000-00-00";
+				}
+			}
+		}else {
+			return "0000-00-00";
+		}
+		// 截取8位日期为yyyy-mm-dd格式，转换为Date，判断日期是否晚于系统当前时间
+		String dateString = MessageFormat.format("{0}-{1}-{2}", strb.substring(6, 10), strb.substring(11, 12),
+				strb.substring(13, 14));
+	
+		// 转换为Date，判断日期是否晚于系统当前时间
+		if (getRiqi(dateString).compareTo(new Date()) > 0) {
+			throw new WrongDateException("出生日期错误");
+		}
+
+		return dateString;
+	}
+
+//定义getRiqi的方法，用来将字符串转换为Date类型
+	public static Date getRiqi(String str) throws ParseException {
+		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+		Date date = df.parse(str);
+		return date;
+	}
+
+}
+
+class WrongDateException extends Exception {
+	public WrongDateException(String message, Throwable cause) {
+		super(message, cause);
+		// TODO Auto-generated constructor stub
+	}
+	public WrongDateException(String message) {
+		super(message);
+		// TODO Auto-generated constructor stub
+	}
+}
