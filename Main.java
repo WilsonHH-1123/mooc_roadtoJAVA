@@ -28,15 +28,14 @@ public class Main {
 	}
 	// 定义验证身份证号的方法
 	public static String checkString(String str) throws WrongDateException, ParseException {
-		StringBuffer strb = new StringBuffer(str);
 		// 先判断是否满足18位
-		if (strb.length() != 18) {
+		if (str.length() != 18) {
 			return "0000-00-00";
 		}
 //		判断最后一位是数字或小写字母,前17位是数字
-		if ((strb.charAt(17) >= 48 && strb.charAt(17) <= 57) || (strb.charAt(17) >= 97 && strb.charAt(17) <= 122)) {
+		if ((str.charAt(17) >= 48 && str.charAt(17) <= 57) || (str.charAt(17) >= 97 && str.charAt(17) <= 122)) {
 			for (int i = 0; i < 17; i++) {
-				if (strb.charAt(i) > 57 || strb.charAt(i) < 48) {
+				if (str.charAt(i) > 57 || str.charAt(i) < 48) {
 					return "0000-00-00";
 				}
 			}
@@ -44,8 +43,8 @@ public class Main {
 			return "0000-00-00";
 		}
 		// 截取8位日期为yyyy-mm-dd格式
-		String dateString = MessageFormat.format("{0}-{1}-{2}", strb.substring(6, 10), strb.substring(10, 12),
-				strb.substring(12, 14));
+		String dateString = MessageFormat.format("{0}-{1}-{2}", str.substring(6, 10), str.substring(10, 12),
+				str.substring(12, 14));
 		//判断日期数值是否合法
 		int yyyy = Integer.parseInt(dateString.substring(0, 4));
 		int mm = Integer.parseInt(dateString.substring(5, 7));
@@ -124,6 +123,8 @@ public class Main {
 			throw new WrongDateException("ErrorLater");
 		}
 		
+		
+		
 		return dateString;
 	}
 
@@ -132,6 +133,48 @@ public class Main {
 		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
 		Date date = df.parse(str);
 		return date;
+	}
+	
+// 校验算法验证7－9－10－5－8－4－2－1－6－3－7－9－10－5－8－4－2
+	public static int jiaoYanMa(String str) {
+		int[] jiaoYan = {7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2};
+		int[] lastNum = new int[17];
+		int sumNum = 0;
+		int resultNum = 0;
+		for (int i = 0; i < 17; i++) {
+			lastNum[i] = Integer.parseInt(str.substring(i, i + 1));
+		}
+		
+		for (int i = 0; i < lastNum.length; i++) {
+			resultNum += lastNum[i] * jiaoYan[i];
+		}
+		//0－1－2－3－4－5－6－7－8－9－10
+		//1－0－X－9－8－7－6－5－4－3－2
+		switch(sumNum%11){
+		case 0:
+			return 1;
+		case 1:	
+			return 1;
+		case 2:		
+			return 1;
+		case 3:		
+			return 1;
+		case 4:		
+			return 1;
+		case 5:		
+			return 1;
+		case 6:		
+			return 1;
+		case 7:		
+			return 1;
+		case 8:		
+			return 1;
+		case 9:		
+			return 1;
+		case 10:	
+			return 1;
+		}
+		
 	}
 
 }
